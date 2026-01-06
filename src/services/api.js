@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://sharespace-backend-xh5c.onrender.com';
 
 // --- 1. Export authAPI (Fixes your error) ---
 export const authAPI = {
