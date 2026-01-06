@@ -1,18 +1,21 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Trash2, Shield, User as UserIcon, Mail } from 'lucide-react';
+import { Trash2, Shield } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // --- FIX: Define your Render URL here ---
+  const BASE_URL = 'https://sharespace-backend-xh5c.onrender.com';
+
   useEffect(() => {
     const fetchUsers = async () => {
       const token = localStorage.getItem('token');
       try {
-        // --- FIX: Use 'Authorization: Bearer' instead of 'x-auth-token' ---
-        const res = await axios.get('http://localhost:5000/api/admin/users', {
+        // --- FIX: Use BASE_URL instead of localhost ---
+        const res = await axios.get(`${BASE_URL}/api/admin/users`, {
           headers: { 
             Authorization: `Bearer ${token}` 
           }
@@ -28,12 +31,13 @@ const AdminDashboard = () => {
     fetchUsers();
   }, []);
 
-  // Added Delete Functionality just in case you need it
+  // Added Delete Functionality
   const handleDelete = async (userId) => {
     if(!window.confirm("Delete this user?")) return;
     try {
         const token = localStorage.getItem('token');
-        // Assuming you have a delete route, otherwise this just updates UI
+        // If you have a delete endpoint, use it here:
+        // await axios.delete(`${BASE_URL}/api/admin/users/${userId}`, { headers: ... })
         setUsers(users.filter(u => u._id !== userId)); 
         toast.success("User removed");
     } catch (err) {
@@ -69,7 +73,8 @@ const AdminDashboard = () => {
                     <div className="avatar">
                       <div className="mask mask-squircle w-12 h-12">
                         {u.profileImage ? (
-                           <img src={`http://localhost:5000/uploads/${u.profileImage}`} alt="Avatar" />
+                           // --- FIX: Use BASE_URL for image source ---
+                           <img src={`${BASE_URL}/uploads/${u.profileImage}`} alt="Avatar" />
                         ) : (
                            <div className="bg-neutral text-neutral-content w-full h-full flex items-center justify-center font-bold">
                              {u.name.charAt(0).toUpperCase()}

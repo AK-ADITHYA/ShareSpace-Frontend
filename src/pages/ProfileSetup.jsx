@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import axios from 'axios'; // Import axios directly for the fetch
+import axios from 'axios'; 
 import { userAPI } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -10,6 +10,9 @@ const ProfileSetup = () => {
   const { user, login } = useContext(AuthContext); 
   const navigate = useNavigate();
   
+  // --- FIX: Define your Render URL here ---
+  const BASE_URL = 'https://sharespace-backend-xh5c.onrender.com';
+
   const isInitialSetup = !user?.location;
   const pageTitle = isInitialSetup ? "Setup Your Profile" : "Edit Profile";
 
@@ -29,14 +32,13 @@ const ProfileSetup = () => {
   useEffect(() => {
     const fetchLatestProfile = async () => {
       try {
-        // We fetch directly from the server to get the LATEST data (including name)
-        // avoiding stale data in localStorage.
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/auth/me', {
+        
+        // --- FIX: Use BASE_URL instead of localhost ---
+        const res = await axios.get(`${BASE_URL}/api/auth/me`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         
-        // Use the fresh data from server 'res.data' instead of 'user' context
         const freshUser = res.data;
 
         setFormData(prev => ({
@@ -57,7 +59,8 @@ const ProfileSetup = () => {
         }));
 
         if (freshUser.profileImage) {
-            setPreviewUrl(`http://localhost:5000/uploads/${freshUser.profileImage}`);
+            // --- FIX: Use BASE_URL for images too ---
+            setPreviewUrl(`${BASE_URL}/uploads/${freshUser.profileImage}`);
         }
         setLoading(false);
 
@@ -179,13 +182,13 @@ const ProfileSetup = () => {
                    <div className="form-control">
                       <label className="label"><span className="label-text">Looking?</span></label>
                       <select name="isLookingForRoommate" className="select select-bordered" value={formData.isLookingForRoommate} onChange={handleChange}>
-                         <option value="yes">Yes</option><option value="no">No</option>
+                          <option value="yes">Yes</option><option value="no">No</option>
                       </select>
                    </div>
                    <div className="form-control">
                       <label className="label"><span className="label-text">Apartment?</span></label>
                       <select name="hasApartment" className="select select-bordered" value={formData.hasApartment} onChange={handleChange}>
-                         <option value="yes">Yes</option><option value="no">No</option>
+                          <option value="yes">Yes</option><option value="no">No</option>
                       </select>
                    </div>
                 </div>
